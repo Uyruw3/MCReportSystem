@@ -8,6 +8,7 @@ import com.mcreport.storage.SqliteStorage;
 import com.mcreport.storage.Storage;
 import com.mcreport.update.AutoUpdater;
 import com.mcreport.web.WebServer;
+import com.mcreport.localization.Localization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MCReportPlugin extends JavaPlugin {
@@ -19,11 +20,13 @@ public class MCReportPlugin extends JavaPlugin {
     private Storage storage;
     private WebServer webServer;
     private AutoUpdater autoUpdater;
+    private Localization localization;
 
     @Override
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        this.localization = new Localization(this);
 
         String storageType = getConfig().getString("storage.type", "yaml").toLowerCase();
         if ("sqlite".equals(storageType)) {
@@ -41,50 +44,49 @@ public class MCReportPlugin extends JavaPlugin {
 
         getCommand("mcreport").setExecutor((sender, command, label, args) -> {
             if (!sender.hasPermission("mcreport.admin")) {
-                sender.sendMessage("§cNo tienes permisos para usar este comando.");
+                sender.sendMessage(localization.message("command.no-permission"));
                 return true;
             }
             if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
                 reloadConfig();
+                localization.reload();
                 storage.reload();
-                sender.sendMessage("§aMCReportPlugin recargado correctamente.");
+                sender.sendMessage(localization.message("command.reload"));
                 return true;
             }
             if (args.length > 0 && args[0].equalsIgnoreCase("webreload")) {
                 restartWebServer();
-                sender.sendMessage("§aServidor web reiniciado.");
+                sender.sendMessage(localization.message("command.web-reload"));
                 return true;
             }
             if (args.length > 0 && args[0].equalsIgnoreCase("update")) {
                 autoUpdater.checkForUpdates();
-                sender.sendMessage("§aBuscando actualizaciones... revisa la consola.");
+                sender.sendMessage(localization.message("command.update"));
                 return true;
             }
             if (args.length > 0 && args[0].equalsIgnoreCase("updatestatus")) {
                 if (autoUpdater.isUpdateAvailable()) {
-                    sender.sendMessage("§eHay una actualización disponible: " + autoUpdater.getLatestVersion());
+                    sender.sendMessage(localization.message("command.update-available",
+                            "{version}", autoUpdater.getLatestVersion()));
                 } else {
-                    sender.sendMessage("§aEl plugin está actualizado.");
+                    sender.sendMessage(localization.message("command.up-to-date"));
                 }
                 if (autoUpdater.hasPendingUpdate()) {
-                    sender.sendMessage("§eJAR pendiente: plugins/" + AutoUpdater.UPDATE_JAR +
-                            " (" + autoUpdater.getPendingFile().length() + " bytes).");
-                    sender.sendMessage("§eSHA-256: " + autoUpdater.getPendingSha256());
-                    sender.sendMessage("§eAplica el cambio con el servidor detenido desde el panel del host.");
+                    sender.sendMessage(localization.message("command.pending-jar",
+                            "{file}", AutoUpdater.UPDATE_JAR,
+                            "{bytes}", autoUpdater.getPendingFile().length()));
+                    sender.sendMessage(localization.message("command.pending-sha",
+                            "{sha}", autoUpdater.getPendingSha256()));
+                    sender.sendMessage(localization.message("command.pending-instructions"));
                 }
                 return true;
             }
             if (args.length > 0 && args[0].equalsIgnoreCase("updateinstructions")) {
-                sender.sendMessage("§eActualización segura para hosts gestionados:");
-                sender.sendMessage("§71. Detén el servidor desde el panel (no uses /reload).");
-                sender.sendMessage("§72. En el gestor de archivos, abre plugins/.");
-                sender.sendMessage("§73. Renombra MCReportPlugin.jar a MCReportPlugin.jar.bak.");
-                sender.sendMessage("§74. Renombra MCReportPlugin-new.jar a MCReportPlugin.jar.");
-                sender.sendMessage("§75. Inicia el servidor y ejecuta /mcreport updatestatus.");
-                sender.sendMessage("§cNunca borres ni sustituyas el JAR mientras el servidor está encendido.");
+                sender.sendMessage(localization.message("command.update-instructions"));
                 return true;
             }
-            sender.sendMessage("§eMCReportPlugin v" + getDescription().getVersion() + " está activo.");
+            sender.sendMessage(localization.message("command.active",
+                    "{version}", getDescription().getVersion()));
             return true;
         });
 
@@ -179,5 +181,9 @@ public class MCReportPlugin extends JavaPlugin {
 
     public Storage getStorage() {
         return storage;
+    }
+
+    public Localization getLocalization() {
+        return localization;
     }
 }

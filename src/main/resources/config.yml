@@ -33,6 +33,13 @@ discord:
   admin-role-id: "1533100155639824604"
 
 # ─────────────────────────────────────────────
+#   Idioma de los mensajes del plugin
+#   Valores disponibles: es (predeterminado), en, pt, fr
+#   Si el valor no es válido, se usa español de forma segura.
+# ─────────────────────────────────────────────
+language: "es"
+
+# ─────────────────────────────────────────────
 #   Configuración de almacenamiento
 # ─────────────────────────────────────────────
 storage:

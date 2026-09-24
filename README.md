@@ -71,6 +71,22 @@ discord:
   admin-role-id: "ID_ROL_ADMIN"  # Rol de administrador
 ```
 
+### Idioma de los mensajes
+
+El idioma predeterminado es español (`es`). Puedes cambiarlo en
+`plugins/MCReportPlugin/config.yml` sin modificar el JAR:
+
+```yaml
+language: "en" # es (predeterminado), en, pt o fr
+```
+
+Se incluyen traducciones para español, inglés, portugués y francés. Si se
+escribe un idioma no compatible o falta un recurso, el plugin registra una
+advertencia y usa español como respaldo. Las claves personalizadas de la
+sección `messages:` existente siguen teniendo prioridad cuando el idioma es
+`es`, para no romper configuraciones anteriores. Tras cambiar el idioma,
+ejecuta `/mcreport reload` o reinicia el servidor.
+
 ## Permisos en Discord
 
 El bot necesita los siguientes permisos en tu servidor de Discord:

@@ -84,7 +84,8 @@ public class BanManager {
                 }
             }
             if (player != null && player.isOnline()) {
-                player.kickPlayer("§cHas sido expulsado.\n\n§7Razón: " + reason);
+                player.kickPlayer(plugin.getLocalization().message("messages.player-kicked")
+                        + "\n\n§7" + plugin.getLocalization().message("chat.reason") + ": " + reason);
                 plugin.getLogger().info("[MCReport] Jugador " + playerName + " expulsado. Razón: " + reason);
             }
         });
@@ -101,7 +102,8 @@ public class BanManager {
         Player online = findOnlinePlayer(playerName);
         if (online != null && online.isOnline()) {
             Bukkit.getScheduler().runTask(plugin, () -> {
-                online.sendMessage("§c🔇 Has sido silenciado por " + minutes + " minutos.");
+                online.sendMessage(plugin.getLocalization().message("chat.muted-for",
+                        "{minutes}", minutes));
             });
         }
         plugin.getLogger().info("[MCReport] Jugador " + playerName + " silenciado por " + minutes + " minutos.");
