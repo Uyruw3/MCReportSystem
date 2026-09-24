@@ -1,0 +1,133 @@
+# ─────────────────────────────────────────────
+#   MCReportPlugin v2.0 - Configuración
+#   Sistema de Reportes Minecraft-Discord
+# ─────────────────────────────────────────────
+
+# Token del bot de Discord (¡NUNCA lo compartas!)
+discord:
+  token: "TU_TOKEN_AQUI"
+
+  # ID del servidor de Discord
+  guild-id: "1532838670258671947"
+
+  # ID del canal donde está el embed de reportar (solo lectura)
+  report-embed-channel: "1547585807056113784"
+
+  # ID del canal donde está el embed de apelaciones (ban appeals)
+  appeal-channel: "1547939265739096105"
+
+  # ID de la categoría donde se crean los tickets de apelación
+  # (si se deja vacío, usa la categoría de tickets de reporte)
+  appeal-ticket-category: ""
+
+  # ID de la categoría donde se crean los tickets de reporte
+  report-ticket-category: "1533099557431279677"
+
+  # Roles de staff (los que pueden actuar sobre los reportes)
+  staff-roles:
+    - "1533100155639824604"
+    - "1533100021933670430"
+    - "1533100196450275461"
+
+  # ID del rol de admin (owner siempre tiene acceso)
+  admin-role-id: "1533100155639824604"
+
+# ─────────────────────────────────────────────
+#   Configuración de almacenamiento
+# ─────────────────────────────────────────────
+storage:
+  # Tipo de almacenamiento: yaml o sqlite
+  type: "yaml"
+
+# ─────────────────────────────────────────────
+#   API web (panel de estadísticas en el navegador)
+#   /mcreport webreload para reiniciar tras cambios
+# ─────────────────────────────────────────────
+web:
+  enabled: false
+  port: 8123
+
+# ─────────────────────────────────────────────
+#   Auto-actualización (se comprueba al iniciar el servidor)
+#   El plugin descarga el jar nuevo y avisa de reiniciar.
+#   En Windows: detén el servidor y ejecuta aplicar-update.bat.
+# ─────────────────────────────────────────────
+update:
+  # Activar la auto-actualización
+  enabled: false
+
+  # URL de un .txt con la última versión (ej: "2.0.1")
+  version-url: "https://github.com/Uyruw3/MCReportSystem/releases/latest/download/latest.txt"
+
+  # URL directa del jar nuevo
+  jar-url: "https://github.com/Uyruw3/MCReportSystem/releases/latest/download/MCReportPlugin.jar"
+
+  # Comprobar actualizaciones al iniciar el servidor
+  check-on-start: true
+
+# ─────────────────────────────────────────────
+#   Compatibilidad con Bedrock (Geyser/Floodgate)
+# ─────────────────────────────────────────────
+bedrock:
+  # Detectar jugadores de Bedrock por prefijo (por defecto ".")
+  prefix: "."
+  # Usar skin genérica de Bedrock en los embeds (los nombres
+  # con prefijo no tienen skin en mc-heads)
+  use-generic-skin: true
+
+# ─────────────────────────────────────────────
+#   Configuración de reportes
+# ─────────────────────────────────────────────
+reports:
+  # Máximo de warns antes del ban automático
+  max-warns-before-ban: 3
+
+  # Duración del ban temporal (en horas)
+  temp-ban-duration-hours: 24
+
+  # Duración del mute (en minutos)
+  mute-duration-minutes: 30
+
+  # Cooldown entre reportes del mismo usuario (en segundos)
+  cooldown-seconds: 60
+
+  # Razones de reporte disponibles
+  reasons:
+    - "Cheating/Hacks"
+    - "Toxicidad/Insultos"
+    - "Spam"
+    - "Evadir Ban"
+    - "Bug Abuse"
+    - "Skin Inapropiada"
+    - "Otro"
+
+# ─────────────────────────────────────────────
+#   Configuración de apelaciones de ban
+# ─────────────────────────────────────────────
+appeals:
+  # Cooldown entre apelaciones del mismo usuario (en segundos)
+  cooldown-seconds: 300
+
+# ─────────────────────────────────────────────
+#   Configuración de evidencia
+# ─────────────────────────────────────────────
+evidence:
+  # Guardar inventario del jugador reportado
+  save-inventory: true
+  # Guardar ubicación del jugador
+  save-location: true
+  # Guardar últimos mensajes del chat
+  save-chat-log: true
+  # Número de mensajes a guardar
+  chat-log-size: 50
+
+# ─────────────────────────────────────────────
+#   Mensajes de Minecraft (en el juego)
+# ─────────────────────────────────────────────
+messages:
+  report-submitted: "&aTu reporte ha sido enviado correctamente. Si se toma alguna acción, serás notificado por DM."
+  player-muted: "&c🔇 Has sido silenciado. No puedes hablar."
+  player-muted-expired: "&aHas sido desilenciado, puedes hablar de nuevo."
+  player-banned: "&cHas sido baneado del servidor."
+  player-kicked: "&cHas sido expulsado del servidor."
+  player-warned: "&e⚠️ Has recibido una advertencia."

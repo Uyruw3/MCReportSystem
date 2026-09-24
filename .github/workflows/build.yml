@@ -1,0 +1,38 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn -B package
+
+      - name: Prepare artifacts
+        run: |
+          JAR=$(ls target/MCReportPlugin-*.jar | grep -v original | head -n 1)
+          cp "$JAR" MCReportPlugin.jar
+          echo "${GITHUB_REF_NAME#v}" > latest.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            MCReportPlugin.jar
+            latest.txt
+          generate_release_notes: true

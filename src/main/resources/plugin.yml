@@ -1,0 +1,24 @@
+name: MCReportPlugin
+version: '2.0.0'
+main: com.mcreport.MCReportPlugin
+api-version: '1.20'
+description: Sistema de reportes Minecraft-Discord
+author: MCReport
+softdepend:
+  - floodgate
+  - Geyser-Spigot
+  - Geyser
+
+commands:
+  mcreport:
+    description: Comandos de MCReport
+    usage: /mcreport <reload|webreload|update|updatestatus>
+    permission: mcreport.admin
+
+permissions:
+  mcreport.admin:
+    description: Acceso a comandos de administración
+    default: op
+  mcreport.report:
+    description: Puede reportar jugadores
+    default: true
