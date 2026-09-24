@@ -282,6 +282,12 @@ public class SqliteStorage implements Storage {
     }
 
     @Override
+    public boolean hasPendingAppeal(String appellantId, String playerName) {
+        String sql = "SELECT 1 FROM appeals WHERE appellant_id = ? AND player_name = ? AND status = 'pending' LIMIT 1";
+        return querySingle(sql, rs -> true, appellantId, playerName) != null;
+    }
+
+    @Override
     public void setAppealDecision(String appealId, String decision, String moderatorTag, String note) {
         String sql = "UPDATE appeals SET status = 'resolved', decision = ?, moderator_tag = ?, note = ?, resolved_at = ? WHERE id = ?";
         executeUpdate(sql, decision, moderatorTag, note != null ? note : "", System.currentTimeMillis(), appealId);

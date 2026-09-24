@@ -270,6 +270,20 @@ public class ReportStorage implements Storage {
         saveAppeals();
     }
 
+    @Override
+    public boolean hasPendingAppeal(String appellantId, String playerName) {
+        if (appealsConfig.getConfigurationSection("appeals") == null) return false;
+        for (String key : appealsConfig.getConfigurationSection("appeals").getKeys(false)) {
+            String path = "appeals." + key;
+            if ("pending".equalsIgnoreCase(appealsConfig.getString(path + ".status"))
+                    && appellantId.equals(appealsConfig.getString(path + ".appellant-id", ""))
+                    && playerName.equalsIgnoreCase(appealsConfig.getString(path + ".player-name", ""))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setAppealDecision(String appealId, String decision, String moderatorTag, String note) {
         String path = "appeals." + appealId;
         appealsConfig.set(path + ".status", "resolved");

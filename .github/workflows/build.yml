@@ -2,8 +2,13 @@ name: Build & Release
 
 on:
   push:
+    branches:
+      - '**'
     tags:
       - 'v*'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -23,13 +28,18 @@ jobs:
       - name: Build with Maven
         run: mvn -B package
 
+      - name: Check whitespace
+        run: git diff --check
+
       - name: Prepare artifacts
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           JAR=$(ls target/MCReportPlugin-*.jar | grep -v original | head -n 1)
           cp "$JAR" MCReportPlugin.jar
           echo "${GITHUB_REF_NAME#v}" > latest.txt
 
       - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           files: |

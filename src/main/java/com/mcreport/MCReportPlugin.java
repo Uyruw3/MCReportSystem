@@ -78,9 +78,10 @@ public class MCReportPlugin extends JavaPlugin {
             return true;
         });
 
-        String token = getConfig().getString("discord.token", "");
+        String token = System.getenv().getOrDefault("MCREPORT_DISCORD_TOKEN",
+                getConfig().getString("discord.token", ""));
         if (token.isEmpty() || token.equals("TU_TOKEN_AQUI")) {
-            getLogger().severe("No se ha configurado el token de Discord! Desactivando plugin...");
+            getLogger().severe("No se ha configurado el token de Discord (MCREPORT_DISCORD_TOKEN o discord.token). Desactivando plugin...");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -123,7 +124,8 @@ public class MCReportPlugin extends JavaPlugin {
             "discord.staff-roles"
         };
         for (String key : required) {
-            if (getConfig().getString(key) == null && getConfig().getList(key) == null) {
+            if ((getConfig().getString(key) == null || getConfig().getString(key).isBlank())
+                    && getConfig().getList(key) == null) {
                 getLogger().warning("Configuración faltante: " + key);
             }
         }

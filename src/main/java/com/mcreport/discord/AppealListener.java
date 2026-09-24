@@ -199,10 +199,20 @@ public class AppealListener extends ListenerAdapter {
         String appellantTag = event.getUser().getAsTag();
         String appellantId = event.getUser().getId();
 
+        if (plugin.getStorage().hasPendingAppeal(appellantId, jugador)) {
+            event.replyEmbeds(EmbedUtils.createErrorEmbed(
+                    "Apelación Pendiente",
+                    "Ya tienes una apelación pendiente para este jugador."
+            )).setEphemeral(true).queue();
+            return;
+        }
+
         guild.createTextChannel(channelName)
                 .setParent(category)
                 .setTopic("📨 " + jugador + " • Apelación • ID: " + appealId)
                 .addPermissionOverride(guild.getPublicRole(), List.of(), List.of(Permission.VIEW_CHANNEL))
+                .addPermissionOverride(event.getMember(),
+                        List.of(Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND), List.of())
                 .queue(ticketChannel -> {
                     for (Long roleId : plugin.getConfig().getLongList("discord.staff-roles")) {
                         Role role = guild.getRoleById(roleId);
@@ -226,8 +236,19 @@ public class AppealListener extends ListenerAdapter {
                             .setActionRow(approveButton, rejectButton)
                             .queue();
 
-                    plugin.getStorage().createAppeal(appealId, appellantTag,
-                            appellantId, jugador, motivo, pruebas, ticketChannel.getId());
+                    try {
+                        plugin.getStorage().createAppeal(appealId, appellantTag,
+                                appellantId, jugador, motivo, pruebas, ticketChannel.getId());
+                    } catch (RuntimeException storageFailure) {
+                        plugin.getLogger().severe("No se pudo guardar la apelación " + appealId
+                                + "; eliminando el ticket incompleto: " + storageFailure.getMessage());
+                        ticketChannel.delete().queue();
+                        event.replyEmbeds(EmbedUtils.createErrorEmbed(
+                                "Error del Servidor",
+                                "No se pudo guardar la apelación. Inténtalo de nuevo."
+                        )).setEphemeral(true).queue();
+                        return;
+                    }
 
                     cooldowns.put(appellantId, System.currentTimeMillis());
 
@@ -337,6 +358,6 @@ public class AppealListener extends ListenerAdapter {
             } catch (Exception e) {
                 plugin.getLogger().warning("Error al eliminar canal de apelación: " + e.getMessage());
             }
-        }, 20L * 3);
+        }, 20L * Math.max(1, plugin.getConfig().getInt("appeals.close-delay-seconds", 10)));
     }
 }

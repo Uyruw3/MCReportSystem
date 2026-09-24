@@ -50,6 +50,8 @@ public interface Storage {
     void createAppeal(String appealId, String appellantTag, String appellantId,
                       String playerName, String reason, String evidence, String channelId);
 
+    boolean hasPendingAppeal(String appellantId, String playerName);
+
     void setAppealDecision(String appealId, String decision, String moderatorTag, String note);
 
     String getAppealPlayer(String appealId);

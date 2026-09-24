@@ -40,7 +40,7 @@ El JAR se genera en `target/MCReportPlugin-2.0.0.jar`.
 
 ```yaml
 discord:
-  token: "TU_TOKEN"              # Token del bot
+  token: "TU_TOKEN"              # Alternativa: variable MCREPORT_DISCORD_TOKEN
   guild-id: "ID_SERVIDOR"        # ID del servidor de Discord
   report-embed-channel: "ID"     # Canal donde va el embed de reportar
   report-ticket-category: "ID"   # Categoría donde se crean los tickets
@@ -49,6 +49,9 @@ discord:
     - "ID_ROL_MOD"
   admin-role-id: "ID_ROL_ADMIN"  # Rol de administrador
 ```
+
+Para evitar guardar secretos en archivos, puedes definir `MCREPORT_DISCORD_TOKEN`
+en el entorno del servidor; tiene prioridad sobre `discord.token`.
 
 ## Permisos en Discord
 
