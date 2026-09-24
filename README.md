@@ -27,7 +27,7 @@ Sistema de reportes Minecraft-Discord para Paper/Spigot 1.20.1
 mvn clean package
 ```
 
-El JAR se genera en `target/MCReportPlugin-2.0.0.jar`.
+El JAR se genera en `target/MCReportPlugin-2.0.3.jar`.
 
 ## Instalación
 
