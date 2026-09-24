@@ -49,8 +49,10 @@ web:
 
 # ─────────────────────────────────────────────
 #   Auto-actualización (se comprueba al iniciar el servidor)
-#   El plugin descarga el jar nuevo y avisa de reiniciar.
-#   En Windows: detén el servidor y ejecuta aplicar-update.bat.
+#   El plugin descarga el JAR nuevo como MCReportPlugin-new.jar y nunca
+#   sustituye el JAR cargado. En hosts gestionados (Play.Hosting/Linux):
+#   detén el servidor desde el panel, renombra el JAR actual a .bak,
+#   renombra MCReportPlugin-new.jar a MCReportPlugin.jar y vuelve a iniciar.
 # ─────────────────────────────────────────────
 update:
   # Activar la auto-actualización
@@ -64,6 +66,10 @@ update:
 
   # Comprobar actualizaciones al iniciar el servidor
   check-on-start: true
+
+  # Para paneles gestionados: la aplicación del JAR siempre es manual y segura.
+  # No requiere scripts ni permisos para ejecutar comandos del sistema.
+  managed-host: true
 
 # ─────────────────────────────────────────────
 #   Compatibilidad con Bedrock (Geyser/Floodgate)

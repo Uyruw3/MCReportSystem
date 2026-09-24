@@ -10,8 +10,6 @@ import com.mcreport.update.AutoUpdater;
 import com.mcreport.web.WebServer;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-
 public class MCReportPlugin extends JavaPlugin {
 
     private static MCReportPlugin instance;
@@ -63,15 +61,27 @@ public class MCReportPlugin extends JavaPlugin {
                 return true;
             }
             if (args.length > 0 && args[0].equalsIgnoreCase("updatestatus")) {
-                File pending = new File(getDataFolder().getParentFile(), AutoUpdater.UPDATE_JAR);
                 if (autoUpdater.isUpdateAvailable()) {
-                    sender.sendMessage("§eHay una actualización disponible:" + autoUpdater.getLatestVersion());
+                    sender.sendMessage("§eHay una actualización disponible: " + autoUpdater.getLatestVersion());
                 } else {
                     sender.sendMessage("§aEl plugin está actualizado.");
                 }
-                if (pending.exists()) {
-                    sender.sendMessage("§eHay un " + AutoUpdater.UPDATE_JAR + " por aplicar. Detén el servidor y ejecuta aplicar-update.bat.");
+                if (autoUpdater.hasPendingUpdate()) {
+                    sender.sendMessage("§eJAR pendiente: plugins/" + AutoUpdater.UPDATE_JAR +
+                            " (" + autoUpdater.getPendingFile().length() + " bytes).");
+                    sender.sendMessage("§eSHA-256: " + autoUpdater.getPendingSha256());
+                    sender.sendMessage("§eAplica el cambio con el servidor detenido desde el panel del host.");
                 }
+                return true;
+            }
+            if (args.length > 0 && args[0].equalsIgnoreCase("updateinstructions")) {
+                sender.sendMessage("§eActualización segura para hosts gestionados:");
+                sender.sendMessage("§71. Detén el servidor desde el panel (no uses /reload).");
+                sender.sendMessage("§72. En el gestor de archivos, abre plugins/.");
+                sender.sendMessage("§73. Renombra MCReportPlugin.jar a MCReportPlugin.jar.bak.");
+                sender.sendMessage("§74. Renombra MCReportPlugin-new.jar a MCReportPlugin.jar.");
+                sender.sendMessage("§75. Inicia el servidor y ejecuta /mcreport updatestatus.");
+                sender.sendMessage("§cNunca borres ni sustituyas el JAR mientras el servidor está encendido.");
                 return true;
             }
             sender.sendMessage("§eMCReportPlugin v" + getDescription().getVersion() + " está activo.");

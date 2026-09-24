@@ -11,6 +11,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class AutoUpdater {
 
@@ -34,11 +36,33 @@ public class AutoUpdater {
         return latestVersion;
     }
 
+    public File getPendingFile() {
+        return new File(plugin.getDataFolder().getParentFile(), UPDATE_JAR);
+    }
+
+    public boolean hasPendingUpdate() {
+        return getPendingFile().isFile();
+    }
+
+    public String getPendingSha256() {
+        File pending = getPendingFile();
+        if (!pending.isFile()) {
+            return "";
+        }
+        try {
+            return sha256(pending);
+        } catch (IOException e) {
+            plugin.getLogger().warning("[Updater] No se pudo calcular el SHA-256 del JAR pendiente: " +
+                    e.getMessage());
+            return "";
+        }
+    }
+
     public void remindPending() {
-        File pending = new File(plugin.getDataFolder().getParentFile(), UPDATE_JAR);
-        if (pending.exists()) {
+        if (hasPendingUpdate()) {
             plugin.getLogger().info("[Updater] Hay un " + UPDATE_JAR + " pendiente por aplicar. " +
-                    "Si aún no lo has aplicado, detén el servidor y ejecuta aplicar-update.bat.");
+                    "Detén el servidor desde el panel, sustituye plugins/" + PLUGIN_JAR +
+                    " por plugins/" + UPDATE_JAR + " y vuelve a iniciarlo.");
         }
     }
 
@@ -76,24 +100,13 @@ public class AutoUpdater {
 
             File pluginsDir = plugin.getDataFolder().getParentFile();
             File pending = new File(pluginsDir, UPDATE_JAR);
-            File target = new File(pluginsDir, PLUGIN_JAR);
             File tmp = new File(pluginsDir, "." + UPDATE_JAR + ".tmp");
 
             downloadJar(jarUrl, tmp);
-
-            if (!pending.exists() || pending.length() != tmp.length()) {
-                Files.move(tmp.toPath(), pending.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            } else {
-                Files.deleteIfExists(tmp.toPath());
-            }
-
-            try {
-                Files.move(pending.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                plugin.getLogger().info("[Updater] ¡Actualización aplicada! Se activará en el próximo reinicio del servidor.");
-            } catch (IOException e) {
-                plugin.getLogger().info("[Updater] Nuevo jar listo en plugins/" + UPDATE_JAR + ". " +
-                        "Para aplicarlo, detén el servidor y ejecuta aplicar-update.bat.");
-            }
+            Files.move(tmp.toPath(), pending.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            plugin.getLogger().info("[Updater] JAR descargado de forma segura en plugins/" + UPDATE_JAR +
+                    " (" + pending.length() + " bytes, SHA-256: " + getPendingSha256() + "). " +
+                    "No se sustituye el JAR cargado. Detén el servidor y aplica el cambio desde el panel.");
         } catch (Exception e) {
             plugin.getLogger().warning("[Updater] Error al comprobar la actualización: " + e.getMessage());
         }
@@ -130,6 +143,26 @@ public class AutoUpdater {
             Files.copy(in, dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } finally {
             conn.disconnect();
+        }
+    }
+
+    private String sha256(File file) throws IOException {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            try (InputStream in = Files.newInputStream(file.toPath())) {
+                byte[] buffer = new byte[8192];
+                int read;
+                while ((read = in.read(buffer)) != -1) {
+                    digest.update(buffer, 0, read);
+                }
+            }
+            StringBuilder result = new StringBuilder();
+            for (byte value : digest.digest()) {
+                result.append(String.format("%02x", value));
+            }
+            return result.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException("SHA-256 no disponible", e);
         }
     }
 
