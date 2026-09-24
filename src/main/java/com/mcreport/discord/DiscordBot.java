@@ -38,6 +38,7 @@ public class DiscordBot {
             jda = JDABuilder.createDefault(token)
                     .setStatus(OnlineStatus.ONLINE)
                     .setActivity(Activity.playing("vigilando el servidor"))
+                    .setAllowedMentions(List.of())
                     .enableIntents(
                             GatewayIntent.GUILD_MESSAGES,
                             GatewayIntent.GUILD_MEMBERS,
@@ -184,10 +185,16 @@ public class DiscordBot {
                     if (message.getAuthor().getId().equals(jda.getSelfUser().getId())) {
                         plugin.getLogger().info("Ya existe un embed de " + label + " en el canal, no se duplica.");
                     } else {
-                        channel.sendMessageEmbeds(embed).setActionRow(button).queue();
+                        channel.sendMessageEmbeds(embed)
+                                .setAllowedMentions(List.of())
+                                .setActionRow(button)
+                                .queue();
                     }
                 }, failure -> {
-                    channel.sendMessageEmbeds(embed).setActionRow(button).queue();
+                    channel.sendMessageEmbeds(embed)
+                            .setAllowedMentions(List.of())
+                            .setActionRow(button)
+                            .queue();
                 });
     }
 
