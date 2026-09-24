@@ -8,20 +8,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatLogger implements Listener {
 
     private final MCReportPlugin plugin;
-    private final Map<String, LinkedList<String>> chatLogs = new HashMap<>();
+    private final Map<String, LinkedList<String>> chatLogs = new ConcurrentHashMap<>();
     private final int maxMessages;
 
     public ChatLogger(MCReportPlugin plugin) {
         this.plugin = plugin;
-        this.maxMessages = plugin.getConfig().getInt("evidence.chat-log-size", 50);
+        this.maxMessages = Math.max(1, plugin.getConfig().getInt("evidence.chat-log-size", 50));
     }
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -39,16 +39,20 @@ public class ChatLogger implements Listener {
 
         chatLogs.computeIfAbsent(playerName.toLowerCase(), k -> new LinkedList<>());
         LinkedList<String> logs = chatLogs.get(playerName.toLowerCase());
-        logs.addLast(message);
-
-        while (logs.size() > maxMessages) {
-            logs.removeFirst();
+        synchronized (logs) {
+            logs.addLast(message);
+            while (logs.size() > maxMessages) {
+                logs.removeFirst();
+            }
         }
     }
 
     public List<String> getPlayerChatLog(String playerName) {
         LinkedList<String> logs = chatLogs.get(playerName.toLowerCase());
-        return logs != null ? new ArrayList<>(logs) : new ArrayList<>();
+        if (logs == null) return new ArrayList<>();
+        synchronized (logs) {
+            return new ArrayList<>(logs);
+        }
     }
 
     public String getPlayerChatLogFormatted(String playerName) {

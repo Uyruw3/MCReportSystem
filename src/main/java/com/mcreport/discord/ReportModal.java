@@ -1,6 +1,7 @@
 package com.mcreport.discord;
 
 import com.mcreport.MCReportPlugin;
+import com.mcreport.minecraft.PlayerDataManager;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -26,11 +27,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 public class ReportModal extends ListenerAdapter {
 
-    private static final Pattern NAME_PATTERN = Pattern.compile("[A-Za-z0-9_.*]{1,17}");
     private static final int MAX_MENU_OPTIONS = 25;
     private static final List<String> DEFAULT_REASONS = List.of(
             "Cheating/Hacks",
@@ -85,22 +84,11 @@ public class ReportModal extends ListenerAdapter {
         return elapsed < cooldownSeconds() ? cooldownSeconds() - elapsed : 0;
     }
 
-    private void applyReportTimestamp(String userId) {
-        long now = System.currentTimeMillis();
-        cooldowns.put(userId, now);
-        lastReportAt.put(userId, now);
-        reportCounts.merge(userId, 1, Integer::sum);
-    }
-
     private List<String> loadReasons() {
         List<String> configured = plugin.getConfig().getStringList("reports.reasons");
         Set<String> reasons = new LinkedHashSet<>(configured.isEmpty() ? DEFAULT_REASONS : configured);
         List<String> result = new ArrayList<>(reasons);
         return result.size() > MAX_MENU_OPTIONS ? result.subList(0, MAX_MENU_OPTIONS) : result;
-    }
-
-    private boolean isValidName(String name) {
-        return name != null && NAME_PATTERN.matcher(name).matches();
     }
 
     @Override
@@ -206,7 +194,7 @@ public class ReportModal extends ListenerAdapter {
         String descripcion = event.getOption("descripcion") != null ? event.getOption("descripcion").getAsString() : "";
         String pruebas = event.getOption("pruebas") != null ? event.getOption("pruebas").getAsString() : "";
 
-        if (!isValidName(jugador)) {
+        if (!InputValidator.isValidPlayerName(jugador)) {
             event.replyEmbeds(EmbedUtils.createErrorEmbed(
                     "Nombre Inválido",
                     "El nombre del jugador no es válido (máximo 17 caracteres, solo letras, números, _ y . o * para Bedrock)."
@@ -240,7 +228,7 @@ public class ReportModal extends ListenerAdapter {
         String descripcion = event.getValue("descripcion") != null ? event.getValue("descripcion").getAsString() : "";
         String pruebas = event.getValue("pruebas") != null ? event.getValue("pruebas").getAsString() : "";
 
-        if (!isValidName(jugador)) {
+        if (!InputValidator.isValidPlayerName(jugador)) {
             event.replyEmbeds(EmbedUtils.createErrorEmbed(
                     "Nombre Inválido",
                     "El nombre del jugador no es válido (máximo 17 caracteres, solo letras, números, _ y . o * para Bedrock)."
@@ -256,6 +244,41 @@ public class ReportModal extends ListenerAdapter {
 
     private void submitReport(InteractionHook hook, Guild guild, String reporterTag, String reporterId,
                               String jugador, String razon, String descripcion, String pruebas) {
+        jugador = jugador.trim();
+        razon = razon.trim();
+        descripcion = InputValidator.normalizeText(descripcion, 1000);
+        pruebas = InputValidator.normalizeEvidence(pruebas);
+        String targetPlayer = jugador;
+        try {
+            String serverEvidence = plugin.getServer().getScheduler()
+                    .callSyncMethod(plugin, () -> new PlayerDataManager(plugin).formatEvidence(targetPlayer))
+                    .get(3, TimeUnit.SECONDS);
+            if (!serverEvidence.isBlank()) {
+                pruebas = pruebas.isBlank() ? serverEvidence : pruebas + "\n\n" + serverEvidence;
+            }
+            pruebas = InputValidator.normalizeText(pruebas, 1000);
+        } catch (Exception exception) {
+            plugin.getLogger().warning("No se pudo capturar evidencia del servidor para " + jugador
+                    + ": " + exception.getMessage());
+        }
+        if (!InputValidator.isConfiguredReason(razon, loadReasons())) {
+            hook.sendMessageEmbeds(EmbedUtils.createErrorEmbed(
+                    "Categoría Inválida", "Selecciona una categoría válida para el reporte."
+            )).queue();
+            return;
+        }
+        if (descripcion.length() < 10) {
+            hook.sendMessageEmbeds(EmbedUtils.createErrorEmbed(
+                    "Descripción Insuficiente", "Describe el incidente con al menos 10 caracteres."
+            )).queue();
+            return;
+        }
+        if (!reserveReportTimestamp(reporterId)) {
+            hook.sendMessageEmbeds(EmbedUtils.createErrorEmbed(
+                    "Cooldown Activo", "Debes esperar antes de enviar otro reporte."
+            )).queue();
+            return;
+        }
         String ticketCategoryId = plugin.getConfig().getString("discord.report-ticket-category", "");
         Category category = ticketCategoryId.isEmpty() ? null : guild.getChannelById(Category.class, ticketCategoryId);
         if (category == null) {
@@ -265,6 +288,7 @@ public class ReportModal extends ListenerAdapter {
                     "Error del Servidor",
                     "El sistema aún no está configurado. Contacta con el staff."
             )).queue();
+            releaseReportTimestamp(reporterId);
             return;
         }
 
@@ -299,9 +323,13 @@ public class ReportModal extends ListenerAdapter {
                                 jugador, razon, descripcion, pruebas, channel.getId());
                     } catch (Exception e) {
                         plugin.getLogger().severe("Error al guardar el reporte: " + e.getMessage());
+                        channel.delete().queue();
+                        releaseReportTimestamp(reporterId);
+                        hook.sendMessageEmbeds(EmbedUtils.createErrorEmbed(
+                                "Error de Persistencia", "No se pudo guardar el reporte. El ticket fue cancelado."
+                        )).queue();
+                        return;
                     }
-
-                    applyReportTimestamp(reporterId);
 
                     hook.sendMessageEmbeds(EmbedUtils.createSuccessEmbed(
                             "Reporte Enviado",
@@ -312,11 +340,30 @@ public class ReportModal extends ListenerAdapter {
                     )).queue();
                 }, failure -> {
                     logChannelCreationFailure(failure, channelName);
+                    releaseReportTimestamp(reporterId);
                     hook.sendMessageEmbeds(EmbedUtils.createErrorEmbed(
                             "Error del Servidor",
                             "No se pudo crear el ticket de reporte. Inténtalo de nuevo."
                     )).queue();
                 });
+    }
+
+    private boolean reserveReportTimestamp(String userId) {
+        long now = System.currentTimeMillis();
+        Long previous = cooldowns.putIfAbsent(userId, now);
+        if (previous == null || (now - previous) / 1000 >= cooldownSeconds()) {
+            if (previous != null) cooldowns.replace(userId, previous, now);
+            lastReportAt.put(userId, now);
+            reportCounts.merge(userId, 1, Integer::sum);
+            return true;
+        }
+        return false;
+    }
+
+    private void releaseReportTimestamp(String userId) {
+        cooldowns.remove(userId);
+        lastReportAt.remove(userId);
+        reportCounts.computeIfPresent(userId, (key, count) -> Math.max(0, count - 1));
     }
 
     private void logChannelCreationFailure(Throwable failure, String channelName) {

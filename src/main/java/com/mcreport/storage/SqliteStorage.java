@@ -98,9 +98,25 @@ public class SqliteStorage implements Storage {
                     stmt.execute();
                 }
             }
+            addColumnIfMissing(conn, "reports", "moderator_tag", "TEXT");
+            addColumnIfMissing(conn, "reports", "action_reason", "TEXT");
+            addColumnIfMissing(conn, "reports", "action_at", "INTEGER");
         } catch (SQLException e) {
             plugin.getLogger().severe("Error initializing SQLite schema: " + e.getMessage());
             throw new RuntimeException(e);
+        }
+    }
+
+    private void addColumnIfMissing(Connection conn, String table, String column, String type) {
+        try (PreparedStatement statement = conn.prepareStatement(
+                "ALTER TABLE " + table + " ADD COLUMN " + column + " " + type)) {
+            statement.executeUpdate();
+        } catch (SQLException exception) {
+            String message = exception.getMessage() == null ? "" : exception.getMessage().toLowerCase();
+            if (!message.contains("duplicate column")) {
+                plugin.getLogger().warning("No se pudo migrar SQLite (" + table + "." + column + "): "
+                        + exception.getMessage());
+            }
         }
     }
 
@@ -137,6 +153,31 @@ public class SqliteStorage implements Storage {
     public void setActionTaken(String reportId, String action) {
         String sql = "UPDATE reports SET action_taken = ? WHERE id = ?";
         executeUpdate(sql, action, reportId);
+    }
+
+    @Override
+    public void setActionTaken(String reportId, String action, String moderatorTag, String reason) {
+        executeUpdate("UPDATE reports SET action_taken = ?, moderator_tag = ?, action_reason = ?, action_at = ? WHERE id = ?",
+                action, moderatorTag, reason != null ? reason : "", System.currentTimeMillis(), reportId);
+    }
+
+    @Override
+    public boolean isReportPending(String reportId) {
+        return Boolean.TRUE.equals(querySingle("SELECT status FROM reports WHERE id = ?",
+                rs -> "pending".equalsIgnoreCase(rs.getString("status")), reportId));
+    }
+
+    @Override
+    public boolean isAppealPending(String appealId) {
+        return Boolean.TRUE.equals(querySingle("SELECT status FROM appeals WHERE id = ?",
+                rs -> "pending".equalsIgnoreCase(rs.getString("status")), appealId));
+    }
+
+    @Override
+    public boolean hasPendingAppeal(String appellantId, String playerName) {
+        Integer count = querySingle("SELECT COUNT(*) AS cnt FROM appeals WHERE appellant_id = ? AND player_name = ? AND status = 'pending'",
+                rs -> rs.getInt("cnt"), appellantId, playerName);
+        return count != null && count > 0;
     }
 
     @Override
@@ -208,6 +249,8 @@ public class SqliteStorage implements Storage {
             report.put("channel-id", rs.getString("channel_id"));
             report.put("status", rs.getString("status"));
             report.put("action-taken", rs.getString("action_taken"));
+            report.put("moderator-tag", rs.getString("moderator_tag"));
+            report.put("action-reason", rs.getString("action_reason"));
             return report;
         }, reportId);
         return report;

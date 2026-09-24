@@ -122,6 +122,41 @@ public class ReportStorage implements Storage {
         saveReports();
     }
 
+    @Override
+    public void setActionTaken(String reportId, String action, String moderatorTag, String reason) {
+        String path = "reports." + reportId;
+        if (!reportsConfig.contains(path)) return;
+        reportsConfig.set(path + ".action-taken", action);
+        reportsConfig.set(path + ".moderator-tag", moderatorTag);
+        reportsConfig.set(path + ".action-reason", reason);
+        reportsConfig.set(path + ".action-at", System.currentTimeMillis());
+        saveReports();
+    }
+
+    @Override
+    public boolean isReportPending(String reportId) {
+        return "pending".equalsIgnoreCase(reportsConfig.getString("reports." + reportId + ".status", ""));
+    }
+
+    @Override
+    public boolean isAppealPending(String appealId) {
+        return "pending".equalsIgnoreCase(appealsConfig.getString("appeals." + appealId + ".status", ""));
+    }
+
+    @Override
+    public boolean hasPendingAppeal(String appellantId, String playerName) {
+        if (appealsConfig.getConfigurationSection("appeals") == null) return false;
+        for (String key : appealsConfig.getConfigurationSection("appeals").getKeys(false)) {
+            String path = "appeals." + key;
+            if ("pending".equalsIgnoreCase(appealsConfig.getString(path + ".status", ""))
+                    && appellantId.equals(appealsConfig.getString(path + ".appellant-id", ""))
+                    && playerName.equalsIgnoreCase(appealsConfig.getString(path + ".player-name", ""))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public String getReportActionTaken(String reportId) {
         return reportsConfig.getString("reports." + reportId + ".action-taken", null);
     }
@@ -179,6 +214,8 @@ public class ReportStorage implements Storage {
             report.put("channel-id", reportsConfig.getString(path + ".channel-id", ""));
             report.put("status", reportsConfig.getString(path + ".status", "pending"));
             report.put("action-taken", reportsConfig.getString(path + ".action-taken", "PENDIENTE"));
+            report.put("moderator-tag", reportsConfig.getString(path + ".moderator-tag", ""));
+            report.put("action-reason", reportsConfig.getString(path + ".action-reason", ""));
         }
         return report;
     }

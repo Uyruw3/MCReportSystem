@@ -146,6 +146,13 @@ public class AppealListener extends ListenerAdapter {
                 return;
             }
 
+            if (!plugin.getStorage().isAppealPending(pending.appealId)) {
+                event.replyEmbeds(EmbedUtils.createErrorEmbed(
+                        "Apelación Cerrada", "Esta apelación ya fue procesada por otro moderador."
+                )).setEphemeral(true).queue();
+                return;
+            }
+
             String note = event.getValue("razon") != null ? event.getValue("razon").getAsString() : "";
             if (pending.approved) {
                 handleApprove(event, pending, note);
@@ -156,14 +163,22 @@ public class AppealListener extends ListenerAdapter {
     }
 
     private void handleAppealSubmit(ModalInteractionEvent event) {
-        String jugador = event.getValue("jugador").getAsString();
-        String motivo = event.getValue("motivo").getAsString();
+        String jugador = event.getValue("jugador").getAsString().trim();
+        String motivo = InputValidator.normalizeText(event.getValue("motivo").getAsString(), 1000);
         String pruebas = event.getValue("pruebas") != null ? event.getValue("pruebas").getAsString() : "";
 
-        if (jugador.length() > 17) {
+        if (!InputValidator.isValidPlayerName(jugador)) {
             event.replyEmbeds(EmbedUtils.createErrorEmbed(
                     "Nombre Inválido",
-                    "El nombre del jugador no puede tener más de 17 caracteres."
+                        "El nombre debe tener entre 1 y 17 caracteres y solo usar letras, números, _ o ."
+            )).setEphemeral(true).queue();
+            return;
+        }
+        pruebas = InputValidator.normalizeEvidence(pruebas);
+        String appellantId = event.getUser().getId();
+        if (plugin.getStorage().hasPendingAppeal(appellantId, jugador)) {
+            event.replyEmbeds(EmbedUtils.createErrorEmbed(
+                    "Apelación Duplicada", "Ya tienes una apelación pendiente para este jugador."
             )).setEphemeral(true).queue();
             return;
         }
@@ -197,8 +212,6 @@ public class AppealListener extends ListenerAdapter {
 
         String channelName = "apelacion-" + jugador.toLowerCase().replaceAll("[^a-z0-9_.*-]", "");
         String appellantTag = event.getUser().getAsTag();
-        String appellantId = event.getUser().getId();
-
         guild.createTextChannel(channelName)
                 .setParent(category)
                 .setTopic("📨 " + jugador + " • Apelación • ID: " + appealId)

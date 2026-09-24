@@ -120,6 +120,8 @@ evidence:
   save-chat-log: true
   # Número de mensajes a guardar
   chat-log-size: 50
+  # La evidencia del servidor se añade al ticket al crear el reporte.
+  # Nunca incluye la dirección IP del jugador.
 
 # ─────────────────────────────────────────────
 #   Mensajes de Minecraft (en el juego)

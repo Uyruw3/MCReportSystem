@@ -19,6 +19,7 @@ public class ReportListener extends ListenerAdapter {
 
     private final MCReportPlugin plugin;
     private final ConcurrentHashMap<String, PendingAction> pendingActions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Boolean> processingReports = new ConcurrentHashMap<>();
 
     public ReportListener(MCReportPlugin plugin) {
         this.plugin = plugin;
@@ -206,28 +207,49 @@ public class ReportListener extends ListenerAdapter {
             return;
         }
 
+        if (!plugin.getStorage().isReportPending(pending.reportId)) {
+            event.replyEmbeds(EmbedUtils.createErrorEmbed(
+                    "Reporte Cerrado", "Este reporte ya fue procesado por otro moderador."
+            )).setEphemeral(true).queue();
+            return;
+        }
+        if (processingReports.putIfAbsent(pending.reportId, Boolean.TRUE) != null) {
+            event.replyEmbeds(EmbedUtils.createErrorEmbed(
+                    "Acción en curso", "Otro moderador ya está procesando este reporte."
+            )).setEphemeral(true).queue();
+            return;
+        }
+
         String reason = event.getValue("razon") != null ? event.getValue("razon").getAsString() : "";
         String duration = event.getValue("duracion") != null ? event.getValue("duracion").getAsString() : "";
 
-        switch (pending.action) {
-            case "ban":
-                handleBan(event, pending, reason);
-                break;
-            case "tempban":
-                handleTempBan(event, pending, reason, duration);
-                break;
-            case "kick":
-                handleKick(event, pending, reason);
-                break;
-            case "warn":
-                handleWarn(event, pending, reason);
-                break;
-            case "mute":
-                handleMute(event, pending, reason, duration);
-                break;
-            case "resolve":
-                handleResolve(event, pending, reason);
-                break;
+        try {
+            switch (pending.action) {
+                case "ban":
+                    handleBan(event, pending, reason);
+                    break;
+                case "tempban":
+                    handleTempBan(event, pending, reason, duration);
+                    break;
+                case "kick":
+                    handleKick(event, pending, reason);
+                    break;
+                case "warn":
+                    handleWarn(event, pending, reason);
+                    break;
+                case "mute":
+                    handleMute(event, pending, reason, duration);
+                    break;
+                case "resolve":
+                    handleResolve(event, pending, reason);
+                    break;
+                default:
+                    event.replyEmbeds(EmbedUtils.createErrorEmbed(
+                            "Acción Inválida", "La acción solicitada no existe."
+                    )).setEphemeral(true).queue();
+            }
+        } finally {
+            processingReports.remove(pending.reportId);
         }
     }
 
@@ -237,7 +259,7 @@ public class ReportListener extends ListenerAdapter {
                 "BAN", pending.playerName, event.getUser().getAsTag(), reason
         )).setEphemeral(false).queue();
 
-        plugin.getStorage().setActionTaken(pending.reportId, "BAN");
+        plugin.getStorage().setActionTaken(pending.reportId, "BAN", event.getUser().getAsTag(), reason);
         notifyReporter(pending.reporterId, pending.playerName, "BAN", reason);
         logAction(event, pending.playerName, "BAN", reason);
     }
@@ -258,7 +280,7 @@ public class ReportListener extends ListenerAdapter {
                 reason + " • ⏰ " + hours + " horas"
         )).setEphemeral(false).queue();
 
-        plugin.getStorage().setActionTaken(pending.reportId, "TEMPBAN");
+        plugin.getStorage().setActionTaken(pending.reportId, "TEMPBAN", event.getUser().getAsTag(), reason);
         notifyReporter(pending.reporterId, pending.playerName, "TEMPBAN",
                 reason + " • " + hours + " horas");
         logAction(event, pending.playerName, "TEMPBAN", reason + " (" + hours + "h)");
@@ -270,7 +292,7 @@ public class ReportListener extends ListenerAdapter {
                 "KICK", pending.playerName, event.getUser().getAsTag(), reason
         )).setEphemeral(false).queue();
 
-        plugin.getStorage().setActionTaken(pending.reportId, "KICK");
+        plugin.getStorage().setActionTaken(pending.reportId, "KICK", event.getUser().getAsTag(), reason);
         notifyReporter(pending.reporterId, pending.playerName, "KICK", reason);
         logAction(event, pending.playerName, "KICK", reason);
     }
@@ -291,7 +313,8 @@ public class ReportListener extends ListenerAdapter {
                     "Ban automático por alcanzar " + maxWarns + " warnings"
             )).setEphemeral(false).queue();
 
-            storage.setActionTaken(pending.reportId, "BAN");
+            storage.setActionTaken(pending.reportId, "BAN", event.getUser().getAsTag(),
+                    "Ban automático por alcanzar " + maxWarns + " warnings");
             notifyReporter(pending.reporterId, pending.playerName, "BAN",
                     "Ban automático por alcanzar " + maxWarns + " warnings");
             logAction(event, pending.playerName, "BAN",
@@ -304,7 +327,7 @@ public class ReportListener extends ListenerAdapter {
                 reason + " • (" + currentWarns + "/" + maxWarns + " warnings)"
         )).setEphemeral(false).queue();
 
-        storage.setActionTaken(pending.reportId, "WARN");
+        storage.setActionTaken(pending.reportId, "WARN", event.getUser().getAsTag(), reason);
         notifyReporter(pending.reporterId, pending.playerName, "WARN",
                 reason + " • " + currentWarns + "/" + maxWarns + " warnings");
         logAction(event, pending.playerName, "WARN", reason);
@@ -325,7 +348,7 @@ public class ReportListener extends ListenerAdapter {
                 reason + " • 🔇 " + minutes + " minutos"
         )).setEphemeral(false).queue();
 
-        plugin.getStorage().setActionTaken(pending.reportId, "MUTE");
+        plugin.getStorage().setActionTaken(pending.reportId, "MUTE", event.getUser().getAsTag(), reason);
         notifyReporter(pending.reporterId, pending.playerName, "MUTE",
                 reason + " • " + minutes + " minutos");
         logAction(event, pending.playerName, "MUTE", reason + " (" + minutes + "min)");

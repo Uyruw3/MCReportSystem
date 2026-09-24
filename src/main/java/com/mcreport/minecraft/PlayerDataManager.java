@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public class PlayerDataManager {
 
@@ -120,5 +121,33 @@ public class PlayerDataManager {
         sb.append("**Ubicación:** (").append(data.get("x")).append(", ").append(data.get("y")).append(", ").append(data.get("z")).append(")\n");
 
         return sb.toString();
+    }
+
+    public String formatEvidence(String playerName) {
+        Map<String, Object> data = capturePlayerData(playerName);
+        if (!(Boolean) data.getOrDefault("online", false)) {
+            return "📌 **Evidencia del servidor:** el jugador no estaba conectado.";
+        }
+
+        StringJoiner evidence = new StringJoiner("\n");
+        evidence.add("📌 **Evidencia del servidor**");
+        evidence.add("Jugador: `" + data.get("name") + "`");
+        if (plugin.getConfig().getBoolean("evidence.save-location", true)) {
+            evidence.add("Ubicación: `" + data.get("world") + " " + data.get("x") + ", "
+                    + data.get("y") + ", " + data.get("z") + "`");
+        }
+        if (plugin.getConfig().getBoolean("evidence.save-inventory", true)) {
+            evidence.add("Inventario capturado: `" + ((List<?>) data.get("inventory")).size() + " objetos`");
+        }
+        if (plugin.getConfig().getBoolean("evidence.save-chat-log", true)) {
+            String chat = plugin.getChatLogger().getPlayerChatLogFormatted(playerName);
+            evidence.add("Chat reciente:\n" + truncate(chat, 500));
+        }
+        return truncate(evidence.toString(), 900);
+    }
+
+    private String truncate(String value, int maxLength) {
+        if (value == null) return "";
+        return value.length() <= maxLength ? value : value.substring(0, maxLength - 1) + "…";
     }
 }

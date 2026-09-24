@@ -19,6 +19,16 @@ public interface Storage {
 
     void setActionTaken(String reportId, String action);
 
+    default void setActionTaken(String reportId, String action, String moderatorTag, String reason) {
+        setActionTaken(reportId, action);
+    }
+
+    boolean isReportPending(String reportId);
+
+    boolean isAppealPending(String appealId);
+
+    boolean hasPendingAppeal(String appellantId, String playerName);
+
     String getReportActionTaken(String reportId);
 
     int getPlayerWarns(String playerName);

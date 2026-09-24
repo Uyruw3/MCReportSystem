@@ -13,7 +13,9 @@ Sistema de reportes Minecraft-Discord para Paper/Spigot 1.20.1
 - **Notificación por DM** al reportero cuando se toma acción
 - **Cooldown** entre reportes para prevenir spam
 - **Evidencia**: logs de chat, inventario y ubicación del jugador
-- **Almacenamiento** en YAML (reports.yml, warns.yml)
+- **Almacenamiento** en YAML (reports.yml, warns.yml) o SQLite, con migración no destructiva
+- **Validación** de nombres, categorías, descripción y URLs; evita reportes duplicados y acciones dobles
+- **Evidencia del servidor** configurable (chat reciente, ubicación e inventario), sin guardar IPs en los reportes
 
 ## Requisitos
 
@@ -35,6 +37,8 @@ El JAR se genera en `target/MCReportPlugin-2.0.0.jar`.
 2. Reinicia el servidor
 3. Edita `plugins/MCReportPlugin/config.yml`
 4. Reinicia nuevamente
+
+El API web está deshabilitado por defecto. Si se habilita, debe protegerse con una red/firewall de confianza antes de exponerlo.
 
 ## Configuración
 
