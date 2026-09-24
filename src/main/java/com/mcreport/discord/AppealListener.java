@@ -203,6 +203,8 @@ public class AppealListener extends ListenerAdapter {
                 .setParent(category)
                 .setTopic("📨 " + jugador + " • Apelación • ID: " + appealId)
                 .addPermissionOverride(guild.getPublicRole(), List.of(), List.of(Permission.VIEW_CHANNEL))
+                .addPermissionOverride(event.getMember(),
+                        List.of(Permission.VIEW_CHANNEL, Permission.MESSAGE_SEND), List.of())
                 .queue(ticketChannel -> {
                     for (Long roleId : plugin.getConfig().getLongList("discord.staff-roles")) {
                         Role role = guild.getRoleById(roleId);
