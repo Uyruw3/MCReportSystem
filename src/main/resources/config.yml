@@ -107,6 +107,8 @@ reports:
 appeals:
   # Cooldown entre apelaciones del mismo usuario (en segundos)
   cooldown-seconds: 300
+  # Tiempo que permanece visible el ticket tras una decisión (en segundos)
+  close-delay-seconds: 10
 
 # ─────────────────────────────────────────────
 #   Configuración de evidencia
