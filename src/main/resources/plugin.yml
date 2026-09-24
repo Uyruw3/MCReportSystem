@@ -12,7 +12,7 @@ softdepend:
 commands:
   mcreport:
     description: Comandos de MCReport
-    usage: /mcreport <reload|webreload|update|updatestatus>
+    usage: /mcreport <reload|webreload|update|updatestatus|updateinstructions>
     permission: mcreport.admin
 
 permissions:

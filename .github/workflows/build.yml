@@ -4,6 +4,15 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing or new release tag to publish (for example v2.0.2)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -27,12 +36,19 @@ jobs:
         run: |
           JAR=$(ls target/MCReportPlugin-*.jar | grep -v original | head -n 1)
           cp "$JAR" MCReportPlugin.jar
-          echo "${GITHUB_REF_NAME#v}" > latest.txt
+          TAG="${{ inputs.release_tag || github.ref_name }}"
+          echo "${TAG#v}" > latest.txt
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
+          body: |
+            MCReportPlugin ${{ inputs.release_tag || github.ref_name }}.
+
+            Incluye el flujo seguro de actualización para hosts gestionados:
+            el JAR pendiente se descarga sin sobrescribir el JAR cargado y se
+            aplica manualmente desde el panel con el servidor detenido.
           files: |
             MCReportPlugin.jar
             latest.txt
-          generate_release_notes: true

@@ -36,6 +36,27 @@ El JAR se genera en `target/MCReportPlugin-2.0.0.jar`.
 3. Edita `plugins/MCReportPlugin/config.yml`
 4. Reinicia nuevamente
 
+### Actualizaciones en hosts gestionados (Play.Hosting/Linux)
+
+La actualización nunca sobrescribe el JAR que está cargado en caliente. Si
+`update.enabled` está activo, el plugin descarga el nuevo archivo como
+`plugins/MCReportPlugin-new.jar` y muestra su tamaño y SHA-256 con
+`/mcreport updatestatus`.
+
+Para aplicarlo desde el panel del host:
+
+1. Ejecuta `/mcreport updateinstructions` o detén el servidor desde el panel.
+2. Abre el gestor de archivos y entra en `plugins/`.
+3. Renombra `MCReportPlugin.jar` a `MCReportPlugin.jar.bak` (no lo borres todavía).
+4. Renombra `MCReportPlugin-new.jar` a `MCReportPlugin.jar`.
+5. Inicia el servidor y ejecuta `/mcreport updatestatus` para confirmar la versión.
+
+Este procedimiento funciona en Linux y no necesita scripts, SSH ni permisos para
+ejecutar comandos. No uses `/reload` ni sustituyas ningún JAR mientras el
+servidor esté encendido. Si el panel no permite renombrar archivos, descarga
+`MCReportPlugin-new.jar`, detén el servidor, reemplaza el archivo desde el
+panel y vuelve a iniciar.
+
 ## Configuración
 
 ```yaml
