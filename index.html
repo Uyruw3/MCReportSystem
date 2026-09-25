@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="MCReportSystem: reportes de Minecraft integrados con Discord.">
+  <title>MCReportSystem</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">MCReportSystem</a>
+    <nav aria-label="Navegación principal">
+      <a href="index.html" data-i18n="nav.home">Inicio</a>
+      <a href="install.html" data-i18n="nav.install">Instalación</a>
+      <a class="discord-link" href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer">Discord</a>
+      <label class="language-picker">
+        <span class="sr-only" data-i18n="language.label">Idioma</span>
+        <select id="language-select" aria-label="Idioma">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="nl">Nederlands</option>
+        </select>
+      </label>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Minecraft + Discord</p>
+      <h1 data-i18n="home.title">Reportes más rápidos, servidores más seguros.</h1>
+      <p class="lead" data-i18n="home.lead">MCReportSystem conecta los reportes de tu servidor Minecraft con Discord para que el equipo de moderación pueda actuar con contexto y privacidad.</p>
+      <div class="actions">
+        <a class="button primary" href="install.html" data-i18n="home.install">Ver instalación</a>
+        <a class="button secondary" href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer" data-i18n="home.discord">Dudas y problemas en Discord</a>
+      </div>
+    </section>
+
+    <section class="content-grid" aria-labelledby="features-title">
+      <h2 id="features-title" data-i18n="home.featuresTitle">Todo lo necesario para moderar</h2>
+      <article class="card">
+        <h3 data-i18n="home.featureReportsTitle">Reportes privados</h3>
+        <p data-i18n="home.featureReports">Un canal temporal por reporte, visible únicamente para el staff autorizado.</p>
+      </article>
+      <article class="card">
+        <h3 data-i18n="home.featureActionsTitle">Acciones desde Discord</h3>
+        <p data-i18n="home.featureActions">Ban, kick, warn y resolución desde botones, con notificación al jugador.</p>
+      </article>
+      <article class="card">
+        <h3 data-i18n="home.featureEvidenceTitle">Evidencia útil</h3>
+        <p data-i18n="home.featureEvidence">Consulta logs de chat, inventario, ubicación y la skin del jugador.</p>
+      </article>
+      <article class="card">
+        <h3 data-i18n="home.featureBedrockTitle">Java y Bedrock</h3>
+        <p data-i18n="home.featureBedrock">Compatibilidad con Geyser y Floodgate para comunidades mixtas.</p>
+      </article>
+    </section>
+
+    <section class="callout">
+      <h2 data-i18n="home.helpTitle">¿Necesitas ayuda?</h2>
+      <p data-i18n="home.help">Para dudas, errores o sugerencias, únete al servidor oficial de Discord.</p>
+      <a class="text-link" href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer" data-i18n="home.joinDiscord">Unirse a Discord →</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>MCReportSystem</span>
+    <a href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer">discord.gg/62SJwZAPNC</a>
+    <span data-i18n="footer.license">Código abierto para tu comunidad.</span>
+  </footer>
+  <script src="i18n.js"></script>
+</body>
+</html>

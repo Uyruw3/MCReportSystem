@@ -2,6 +2,15 @@
 
 Sistema de reportes Minecraft-Discord para Paper/Spigot 1.20.1
 
+## Documentación pública
+
+- [Página principal](index.html)
+- [Instalación y configuración](install.html)
+- [Discord de soporte](https://discord.gg/62SJwZAPNC) para dudas, problemas y sugerencias
+
+La documentación web incluye un selector en español, inglés, portugués, francés,
+alemán, italiano y neerlandés. El español es el idioma predeterminado.
+
 ## Funcionalidades
 
 - **Embed permanente** en Discord con botón "📋 Reportar Jugador"

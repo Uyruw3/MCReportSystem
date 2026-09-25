@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Instala y configura MCReportSystem en Paper o Spigot.">
+  <title>Instalación · MCReportSystem</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">MCReportSystem</a>
+    <nav aria-label="Navegación principal">
+      <a href="index.html" data-i18n="nav.home">Inicio</a>
+      <a href="install.html" data-i18n="nav.install">Instalación</a>
+      <a class="discord-link" href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer">Discord</a>
+      <label class="language-picker">
+        <span class="sr-only" data-i18n="language.label">Idioma</span>
+        <select id="language-select" aria-label="Idioma">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="nl">Nederlands</option>
+        </select>
+      </label>
+    </nav>
+  </header>
+
+  <main class="article">
+    <p class="eyebrow">MCReportSystem</p>
+    <h1 data-i18n="install.title">Instalación y configuración</h1>
+    <p class="lead" data-i18n="install.lead">Pon el plugin en marcha en unos minutos. Necesitas Java 17 o superior, Paper/Spigot 1.20.1 y un bot de Discord.</p>
+
+    <h2 data-i18n="install.stepsTitle">Pasos</h2>
+    <ol class="steps">
+      <li data-i18n="install.step1">Descarga el JAR de la última versión desde la sección Releases del repositorio.</li>
+      <li data-i18n="install.step2">Copia el archivo en la carpeta <code>plugins/</code> y reinicia el servidor.</li>
+      <li data-i18n="install.step3">Edita <code>plugins/MCReportPlugin/config.yml</code> con el token del bot y los IDs de Discord.</li>
+      <li data-i18n="install.step4">Reinicia de nuevo y comprueba que el bot esté conectado y tenga los permisos necesarios.</li>
+    </ol>
+
+    <h2 data-i18n="install.requirementsTitle">Permisos del bot</h2>
+    <p data-i18n="install.permissions">El bot necesita enviar mensajes, ver canales, gestionar canales, insertar enlaces, enviar mensajes embebidos y adjuntar archivos.</p>
+
+    <div class="warning">
+      <strong data-i18n="install.secretTitle">Protege tu token</strong>
+      <p data-i18n="install.secret">No publiques el token del bot ni lo subas al repositorio. Si se filtra, revócalo inmediatamente desde el portal de desarrolladores de Discord.</p>
+    </div>
+
+    <h2 data-i18n="install.updateTitle">Actualizaciones en hosts gestionados</h2>
+    <p data-i18n="install.update">Si activas la auto-actualización, el nuevo JAR se descarga como <code>MCReportPlugin-new.jar</code>. Detén el servidor desde el panel antes de reemplazar el archivo cargado; no uses <code>/reload</code>.</p>
+
+    <p class="support" data-i18n="install.support">¿Algo no funciona? Comparte la versión, el error y los pasos para reproducirlo en Discord:</p>
+    <a class="button primary" href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer" data-i18n="install.discord">Abrir Discord de soporte</a>
+  </main>
+
+  <footer class="site-footer">
+    <a href="index.html" data-i18n="nav.home">Inicio</a>
+    <a href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer">discord.gg/62SJwZAPNC</a>
+    <span data-i18n="footer.license">Código abierto para tu comunidad.</span>
+  </footer>
+  <script src="i18n.js"></script>
+</body>
+</html>
