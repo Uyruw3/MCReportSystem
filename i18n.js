@@ -111,10 +111,10 @@ translations.nl = {
 };
 
 const select = document.querySelector("#language-select");
-const locale = new URLSearchParams(window.location.search).get("lang") || localStorage.getItem("mcreport-language") || "es";
+const locale = new URLSearchParams(window.location.search).get("lang") || localStorage.getItem("mcreport-language") || "en";
 
 function applyLanguage(language) {
-  const selected = translations[language] ? language : "es";
+  const selected = translations[language] ? language : "en";
   document.documentElement.lang = selected;
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     const value = translations[selected][element.dataset.i18n];
