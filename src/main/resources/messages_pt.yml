@@ -1,0 +1,30 @@
+messages:
+  report-submitted: "&aSeu relatório foi enviado com sucesso. Você será notificado por DM se alguma ação for tomada."
+  player-muted: "&c🔇 Você foi silenciado e não pode falar."
+  player-muted-expired: "&aSeu silêncio terminou; você pode falar novamente."
+  player-banned: "&cVocê foi banido do servidor."
+  player-kicked: "&cVocê foi expulso do servidor."
+  player-warned: "&e⚠️ Você recebeu uma advertência."
+command:
+  no-permission: "&cVocê não tem permissão para usar este comando."
+  reload: "&aMCReportPlugin recarregado com sucesso."
+  web-reload: "&aServidor web reiniciado."
+  update: "&aProcurando atualizações... verifique o console."
+  update-available: "&eHá uma atualização disponível: {version}"
+  up-to-date: "&aO plugin está atualizado."
+  pending-jar: "&eJAR pendente: plugins/{file} ({bytes} bytes)."
+  pending-sha: "&eSHA-256: {sha}"
+  pending-instructions: "&eAplique a alteração com o servidor parado pelo painel da hospedagem."
+  update-instructions: |-
+    &eAtualização segura para hosts gerenciados:
+    &71. Pare o servidor pelo painel (não use /reload).
+    &72. Abra plugins/ no gerenciador de arquivos.
+    &73. Renomeie MCReportPlugin.jar para MCReportPlugin.jar.bak.
+    &74. Renomeie MCReportPlugin-new.jar para MCReportPlugin.jar.
+    &75. Inicie o servidor e execute /mcreport updatestatus.
+    &cNunca exclua ou substitua o JAR enquanto o servidor estiver ligado.
+  active: "&eMCReportPlugin v{version} está ativo."
+chat:
+  no-messages: "Nenhuma mensagem registrada."
+  reason: "Motivo"
+  muted-for: "&c🔇 Você foi silenciado por {minutes} minutos."

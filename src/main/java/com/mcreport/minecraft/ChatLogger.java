@@ -30,7 +30,7 @@ public class ChatLogger implements Listener {
 
         if (plugin.getBanManager().isPlayerMuted(player.getName())) {
             event.setCancelled(true);
-            player.sendMessage("§c🔇 Has sido silenciado. No puedes hablar.");
+            player.sendMessage(plugin.getLocalization().message("messages.player-muted"));
             return;
         }
 
@@ -53,7 +53,7 @@ public class ChatLogger implements Listener {
 
     public String getPlayerChatLogFormatted(String playerName) {
         List<String> logs = getPlayerChatLog(playerName);
-        if (logs.isEmpty()) return "No hay mensajes registrados.";
+        if (logs.isEmpty()) return plugin.getLocalization().message("chat.no-messages");
 
         StringBuilder sb = new StringBuilder();
         for (String msg : logs) {
