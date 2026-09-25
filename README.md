@@ -27,7 +27,7 @@ Sistema de reportes Minecraft-Discord para Paper/Spigot 1.20.1
 mvn clean package
 ```
 
-El JAR se genera en `target/MCReportPlugin-2.0.3.jar`.
+El JAR se genera en `target/MCReportPlugin-2.0.5.jar`.
 
 ## Instalación
 
@@ -77,10 +77,11 @@ El idioma predeterminado es español (`es`). Puedes cambiarlo en
 `plugins/MCReportPlugin/config.yml` sin modificar el JAR:
 
 ```yaml
-language: "en" # es (predeterminado), en, pt o fr
+language: "en" # es (predeterminado), en, pt, fr, de, it o nl
 ```
 
-Se incluyen traducciones para español, inglés, portugués y francés. Si se
+Se incluyen traducciones para español, inglés, portugués, francés, alemán,
+italiano y neerlandés. Si se
 escribe un idioma no compatible o falta un recurso, el plugin registra una
 advertencia y usa español como respaldo. Las claves personalizadas de la
 sección `messages:` existente siguen teniendo prioridad cuando el idioma es

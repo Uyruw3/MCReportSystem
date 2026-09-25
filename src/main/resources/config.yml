@@ -34,7 +34,7 @@ discord:
 
 # ─────────────────────────────────────────────
 #   Idioma de los mensajes del plugin
-#   Valores disponibles: es (predeterminado), en, pt, fr
+#   Valores disponibles: es (predeterminado), en, pt, fr, de, it, nl
 #   Si el valor no es válido, se usa español de forma segura.
 # ─────────────────────────────────────────────
 language: "es"

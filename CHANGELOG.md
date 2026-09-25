@@ -2,6 +2,14 @@
 
 Todos los cambios relevantes de MCReportPlugin se documentan en este archivo.
 
+## [2.0.5] - 2026-09-25
+
+### Añadido
+
+- Traducciones para alemán (`de`), italiano (`it`) y neerlandés (`nl`).
+- Los siete idiomas disponibles se validan desde `config.yml`, manteniendo
+  español (`es`) como idioma predeterminado y respaldo seguro.
+
 ## [2.0.3] - 2026-09-24
 
 ### Añadido

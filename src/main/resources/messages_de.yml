@@ -1,0 +1,30 @@
+messages:
+  report-submitted: "&aDein Report wurde erfolgreich gesendet. Falls eine Maßnahme ergriffen wird, wirst du per DM benachrichtigt."
+  player-muted: "&c🔇 Du wurdest stummgeschaltet und kannst nicht chatten."
+  player-muted-expired: "&aDeine Stummschaltung ist abgelaufen; du kannst wieder chatten."
+  player-banned: "&cDu wurdest vom Server gebannt."
+  player-kicked: "&cDu wurdest vom Server geworfen."
+  player-warned: "&e⚠️ Du hast eine Verwarnung erhalten."
+command:
+  no-permission: "&cDu hast keine Berechtigung für diesen Befehl."
+  reload: "&aMCReportPlugin wurde erfolgreich neu geladen."
+  web-reload: "&aWebserver neu gestartet."
+  update: "&aSuche nach Updates... siehe Konsole."
+  update-available: "&eEin Update ist verfügbar: {version}"
+  up-to-date: "&aDas Plugin ist aktuell."
+  pending-jar: "&eAusstehendes JAR: plugins/{file} ({bytes} Bytes)."
+  pending-sha: "&eSHA-256: {sha}"
+  pending-instructions: "&eWende die Änderung bei gestopptem Server über das Host-Panel an."
+  update-instructions: |-
+    &eSicheres Update für verwaltete Hosts:
+    &71. Stoppe den Server über das Panel (verwende nicht /reload).
+    &72. Öffne plugins/ im Dateimanager.
+    &73. Benenne MCReportPlugin.jar in MCReportPlugin.jar.bak um.
+    &74. Benenne MCReportPlugin-new.jar in MCReportPlugin.jar um.
+    &75. Starte den Server und führe /mcreport updatestatus aus.
+    &cLösche oder ersetze das JAR niemals bei laufendem Server.
+  active: "&eMCReportPlugin v{version} ist aktiv."
+chat:
+  no-messages: "Keine Nachrichten aufgezeichnet."
+  reason: "Grund"
+  muted-for: "&c🔇 Du wurdest für {minutes} Minuten stummgeschaltet."

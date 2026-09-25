@@ -63,7 +63,7 @@ public class EmbedUtils {
                 "**⚠️ Importante:** Los reportes falsos serán sancionados."
         );
         embed.setColor(COLOR_PRIMARY);
-        embed.setFooter(FOOTER_TEXT + " • Versión 2.0.3");
+        embed.setFooter(FOOTER_TEXT + " • Versión 2.0.5");
         embed.setTimestamp(Instant.now());
         return embed.build();
     }

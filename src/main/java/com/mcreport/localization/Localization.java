@@ -16,7 +16,7 @@ import java.util.Locale;
 public final class Localization {
 
     private static final String DEFAULT_LANGUAGE = "es";
-    private static final String[] SUPPORTED_LANGUAGES = {"es", "en", "pt", "fr"};
+    private static final String[] SUPPORTED_LANGUAGES = {"es", "en", "pt", "fr", "de", "it", "nl"};
 
     private final MCReportPlugin plugin;
     private YamlConfiguration messages;
@@ -33,7 +33,7 @@ public final class Localization {
         language = isSupported(normalized) ? normalized : DEFAULT_LANGUAGE;
         if (!language.equals(normalized)) {
             plugin.getLogger().warning("Idioma no compatible '" + configured
-                    + "'; se usará español (es). Idiomas disponibles: en, es, pt, fr.");
+                    + "'; se usará español (es). Idiomas disponibles: en, es, pt, fr, de, it, nl.");
         }
         messages = load(language);
     }

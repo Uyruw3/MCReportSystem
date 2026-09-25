@@ -1,0 +1,30 @@
+messages:
+  report-submitted: "&aJe melding is succesvol verzonden. Je ontvangt een DM als er actie wordt ondernomen."
+  player-muted: "&c🔇 Je bent gedempt en kunt niet chatten."
+  player-muted-expired: "&aJe demping is verlopen; je kunt weer chatten."
+  player-banned: "&cJe bent verbannen van de server."
+  player-kicked: "&cJe bent van de server verwijderd."
+  player-warned: "&e⚠️ Je hebt een waarschuwing ontvangen."
+command:
+  no-permission: "&cJe hebt geen toestemming om dit commando te gebruiken."
+  reload: "&aMCReportPlugin is succesvol herladen."
+  web-reload: "&aWebserver opnieuw gestart."
+  update: "&aControleren op updates... bekijk de console."
+  update-available: "&eEr is een update beschikbaar: {version}"
+  up-to-date: "&aDe plugin is up-to-date."
+  pending-jar: "&eJAR in behandeling: plugins/{file} ({bytes} bytes)."
+  pending-sha: "&eSHA-256: {sha}"
+  pending-instructions: "&ePas de wijziging toe met de server gestopt via het hostingpaneel."
+  update-instructions: |-
+    &eVeilige update voor beheerde hosts:
+    &71. Stop de server via het paneel (gebruik geen /reload).
+    &72. Open plugins/ in de bestandsbeheerder.
+    &73. Hernoem MCReportPlugin.jar naar MCReportPlugin.jar.bak.
+    &74. Hernoem MCReportPlugin-new.jar naar MCReportPlugin.jar.
+    &75. Start de server en voer /mcreport updatestatus uit.
+    &cVerwijder of vervang het JAR nooit terwijl de server draait.
+  active: "&eMCReportPlugin v{version} is actief."
+chat:
+  no-messages: "Geen berichten geregistreerd."
+  reason: "Reden"
+  muted-for: "&c🔇 Je bent {minutes} minuten gedempt."
