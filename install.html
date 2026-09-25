@@ -10,7 +10,7 @@
 <body>
   <header class="site-header">
     <a class="brand" href="index.html">MCReportSystem</a>
-    <nav>
+    <nav aria-label="Main navigation" data-i18n-aria-label="nav.label">
       <a href="index.html" data-i18n="nav.home">Home</a>
       <a href="install.html" data-i18n="nav.install">Installation</a>
       <a class="discord-link" href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer">Discord</a>
@@ -32,28 +32,48 @@
   <main class="article">
     <p class="eyebrow">MCReportSystem</p>
     <h1 data-i18n="install.title">Installation and configuration</h1>
-    <p class="lead" data-i18n="install.lead">Get the plugin running in minutes. You need Java 17+, Paper/Spigot 1.20.1 and a Discord bot.</p>
+    <p class="lead" data-i18n="install.lead">Install the plugin on Paper or Spigot 1.20.1 with Java 17 or later, then connect a Discord bot.</p>
 
-    <h2 data-i18n="install.stepsTitle">Steps</h2>
+    <h2 data-i18n="install.requirementsTitle">Requirements</h2>
+    <p data-i18n="install.requirements">A Minecraft server running Paper or Spigot 1.20.1, Java 17 or later, and a Discord application with a bot.</p>
+
+    <h2 data-i18n="install.stepsTitle">Installation steps</h2>
     <ol class="steps">
-      <li data-i18n="install.step1">Download the latest JAR from the repository's Releases section.</li>
-      <li data-i18n="install.step2">Copy it to the <code>plugins/</code> folder and restart the server.</li>
-      <li data-i18n="install.step3">Edit <code>plugins/MCReportPlugin/config.yml</code> with the bot token and Discord IDs.</li>
-      <li data-i18n="install.step4">Restart again and verify that the bot is connected and has the required permissions.</li>
+      <li>
+        <span data-i18n="install.step1">Download the latest MCReportPlugin JAR from GitHub Releases.</span>
+        <a href="https://github.com/Uyruw3/MCReportSystem/releases/latest" target="_blank" rel="noopener noreferrer" data-i18n="install.releases">Open latest release</a>
+      </li>
+      <li data-i18n="install.step2">Stop the server, place the JAR in plugins/, and start the server once. Stop it again before editing the generated configuration.</li>
+      <li>
+        <span data-i18n="install.step3">Create a Discord application and bot in the Developer Portal. In the Bot settings, generate the token and enable Server Members Intent and Message Content Intent.</span>
+        <a href="https://discord.com/developers/applications" target="_blank" rel="noopener noreferrer" data-i18n="install.portal">Open Discord Developer Portal</a>
+      </li>
+      <li data-i18n="install.step4">Invite the bot to your server with the bot and applications.commands OAuth2 scopes. Grant the permissions listed below.</li>
+      <li data-i18n="install.step5">In plugins/MCReportPlugin/config.yml, set the bot token and the IDs for your Discord server, channels, categories, and staff roles.</li>
+      <li data-i18n="install.step6">Save the configuration and start the Minecraft server. Check the console for a successful Discord connection and setup messages.</li>
     </ol>
 
-    <h2 data-i18n="install.requirementsTitle">Bot permissions</h2>
-    <p data-i18n="install.permissions">The bot needs permission to send messages, view channels, manage channels, embed links, send embeds and attach files.</p>
+    <h2 data-i18n="install.permissionsTitle">Bot permissions</h2>
+    <p data-i18n="install.permissions">Grant View Channels, Send Messages, Embed Links, Read Message History, Manage Channels, and Manage Roles. The bot must be able to view and send messages in both configured embed channels and access the ticket categories.</p>
+
+    <h2 data-i18n="install.idsTitle">Discord IDs in the configuration</h2>
+    <p data-i18n="install.ids">Enable Developer Mode in Discord (User Settings → Advanced), then use Copy ID from the server, channel, category, or role context menu. Set discord.guild-id, discord.report-embed-channel, discord.appeal-channel, discord.report-ticket-category, discord.appeal-ticket-category, discord.staff-roles, and discord.admin-role-id to the matching IDs. IDs must be quoted as strings. If appeal-ticket-category is empty, report-ticket-category is used for appeal tickets too.</p>
+    <pre><code>discord:
+  token: ""
+  guild-id: ""
+  report-embed-channel: ""
+  appeal-channel: ""
+  report-ticket-category: ""
+  appeal-ticket-category: ""
+  staff-roles: []
+  admin-role-id: ""</code></pre>
 
     <div class="warning">
-      <strong data-i18n="install.secretTitle">Protect your token</strong>
-      <p data-i18n="install.secret">Never publish the bot token or commit it to the repository. If it leaks, revoke it immediately in the Discord Developer Portal.</p>
+      <strong data-i18n="install.secretTitle">Keep your bot token secret</strong>
+      <p data-i18n="install.secret">Generate or reset the token in the Developer Portal, then store it only in the server's config.yml. Do not share it, publish it, or commit it to a repository. If it has been exposed, reset it immediately and update the configuration.</p>
     </div>
 
-    <h2 data-i18n="install.updateTitle">Updates on managed hosts</h2>
-    <p data-i18n="install.update">When auto-update is enabled, the new JAR is downloaded as <code>MCReportPlugin-new.jar</code>. Stop the server from the host panel before replacing the loaded file; do not use <code>/reload</code>.</p>
-
-    <p class="support" data-i18n="install.support">Something not working? Share the version, error and reproduction steps on Discord:</p>
+    <p class="support" data-i18n="install.support">If setup fails, share the plugin version and relevant console error on Discord. Never include your bot token.</p>
     <a class="button primary" href="https://discord.gg/62SJwZAPNC" target="_blank" rel="noopener noreferrer" data-i18n="install.discord">Open support Discord</a>
   </main>
 
